@@ -11,34 +11,40 @@ public class ValidateDate {
 	
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
+	// Validação do dia, mes e ano
     public void validateDay(String date) {
         try {
-            LocalDate day = LocalDate.parse(date, formatter);
+            LocalDate data = LocalDate.parse(date, formatter);
+            int day = data.getDayOfMonth();
+    		int month = data.getMonthValue();
+    		int year = data.getYear();
 
-            if (day.getDayOfMonth() < 1 || day.getDayOfMonth() > 31) {
+            if ((day < 1 || day > 31) || month < 1 || month > 12 || year < 1) {
                 throw new IllegalArgumentException();
             }
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Data inválida");
+            throw new IllegalArgumentException("Data inválida.");
         }
     }
     
+    // Validação se o mes possui apenas 30 dias
     public void validateMonth(String date) {
         try {
             LocalDate day = LocalDate.parse(date, formatter);
 
             int month = day.getMonthValue();
             int dayOfMonth = Integer.parseInt(date.substring(0, 2));
-            if (dayOfMonth == 31){
-            	if(month == 4 || month == 6 || month == 9 || month == 11){
-            		throw new IllegalArgumentException("Data inválida. Este mês não possui o dia 31.");            		
+            if ((dayOfMonth == 31) || month == 2 && dayOfMonth >= 30) {
+            	if(month == 4 || month == 6 || month == 9 || month == 11 || month == 2){
+            		throw new IllegalArgumentException("Data inválida.");            		
             	}
             }
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Mês invalido.");
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
     
+    // Validação de ano bissexto
     public void validateLeapYear(String date) {
     	try {
     		LocalDate data = LocalDate.parse(date, formatter);
@@ -47,11 +53,11 @@ public class ValidateDate {
     		int month = data.getMonthValue();
     		int year = data.getYear();
     		
-    		if((year % 4 != 0) && month == 2 && day == 29) {
+    		if((year % 4 != 0) && month == 2 && day >= 29) {
     			throw new IllegalArgumentException("Data inválida. Este ano não é bissexto.");
     		}
 		} catch (DateTimeParseException e) {
-			throw new IllegalArgumentException("Ano invalido.");
+			throw new IllegalArgumentException(e.getMessage());
 		}
     }
 }
